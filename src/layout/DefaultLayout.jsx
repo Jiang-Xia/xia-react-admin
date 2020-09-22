@@ -7,10 +7,13 @@ import {
     UploadOutlined
 } from '@ant-design/icons'
 import React from 'react'
+import { Route, Redirect, Switch } from 'react-router-dom'
+import Routes from '@/router'
 import * as request from '@/api/home'
 import menu from './menu'
 
 const { Header, Sider, Content } = Layout
+// 菜单栏
 function MenuItemList(props) {
     const menu = props.menu
     const { SubMenu } = Menu
@@ -27,12 +30,17 @@ function MenuItemList(props) {
             : (ele = <Menu.Item key={item.path}>{item.cn}</Menu.Item>)
         return ele
     })
+    const clickItemHandle = (item) => {
+        console.log(item)
+    }
     return (
-        <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}>
+        <Menu theme='dark' mode='inline' onClick={clickItemHandle} defaultSelectedKeys={['1']}>
             {listItems}
         </Menu>
     )
 }
+
+// 系统布局
 class DefaultLayout extends React.Component {
     state = {
         collapsed: false,
@@ -63,6 +71,7 @@ class DefaultLayout extends React.Component {
         })
     }
     render() {
+        let auth = ''
         return (
             <Layout style={{ height: '100%' }} className='sys-layout-container'>
                 <Sider className='sys-sider-container' trigger={null} collapsible collapsed={this.state.collapsed}>
@@ -83,8 +92,20 @@ class DefaultLayout extends React.Component {
                             padding: 24,
                             minHeight: 280
                         }}>
-                        {/* {this.getHtml()} */}
-                        Content
+                        <Switch>
+                            {Routes.map((item) => {
+                                return (
+                                    <Route
+                                        key={item.path}
+                                        path={item.path}
+                                        exact={item.exact}
+                                        render={(props) => {
+                                            console.log(props)
+                                            item.component = props
+                                        }}></Route>
+                                )
+                            })}
+                        </Switch>
                     </Content>
                 </Layout>
             </Layout>
